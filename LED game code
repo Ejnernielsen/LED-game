@@ -1,0 +1,41 @@
+#include <Adafruit_CircuitPlayground.h>
+
+// Defined LED colors
+#define RED   0xFF0000
+#define GREEN 0x00FF00
+#define BLUE  0x0000FF
+
+
+void setup() {
+  Serial.begin(9600);
+  CircuitPlayground.begin();
+  CircuitPlayground.clearPixels(); // Clear NeoPixels at the beginning
+  randomSeed(analogRead(0)); // begin the seed random number generator 
+}
+
+void loop() {
+  delay(100);
+  delay(random(200, 500)); // Random delay between 200 to 500 milliseconds
+  int ledIndex = random(10); // Random LED index to light up (the index is the position of the LED in the array)
+  CircuitPlayground.setPixelColor(ledIndex, RED); // Light up the LED in red
+  int red = random(256); 
+
+  unsigned long startTime = millis(); // Record the start time
+  while (!CircuitPlayground.leftButton() && !CircuitPlayground.rightButton()) {
+    // Wait for the player to press either button
+  }
+  unsigned long reactionTime = millis() - startTime; // Calculates the reaction time 
+
+  if (reactionTime < 50) {
+    CircuitPlayground.setPixelColor(0, GREEN); // Very quick reaction time
+  } else if (reactionTime < 100) {
+    CircuitPlayground.setPixelColor(0, BLUE); // Moderate reaction time
+  } else {
+    CircuitPlayground.setPixelColor(0, RED); // Slow reaction time
+    CircuitPlayground.playTone(329.5, 100); //sound to play when thr reaction time is slow
+  }
+  Serial.println(reactionTime); // Display the reaction time
+
+  delay(200); // Wait for 2 seconds before clearing NeoPixels
+  CircuitPlayground.clearPixels(); // Clear NeoPixels for the next round 
+}
